@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
+import { AppHeader } from '@/components/AppHeader';
 import { ProvisionRetry } from '@/components/ProvisionRetry';
-import { SignOutButton } from '@/components/SignOutButton';
 import { createClient } from '@/lib/supabase/server';
 
 // Always dynamic — reads the session cookie and per-user membership data,
@@ -34,12 +34,7 @@ export default async function DashboardsPage() {
 
   return (
     <main className="bg-bg min-h-screen">
-      <header className="border-border bg-surface flex h-14 items-center justify-between border-b px-6">
-        <span className="text-text-primary text-sm font-medium">
-          {membership.organization?.name}
-        </span>
-        <SignOutButton />
-      </header>
+      <AppHeader orgName={membership.organization?.name ?? ''} />
 
       <div className="mx-auto max-w-[1280px] px-6 py-8">
         <div className="mb-6 flex items-center justify-between">

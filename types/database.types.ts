@@ -12,6 +12,243 @@ export type Database = {
   };
   public: {
     Tables: {
+      data_sources: {
+        Row: {
+          connection_options: Json;
+          created_at: string;
+          created_by: string | null;
+          credential_ref: string;
+          database_name: string;
+          host: string;
+          id: string;
+          last_test_error: string | null;
+          last_tested_at: string | null;
+          name: string;
+          organization_id: string;
+          port: number;
+          ssl_mode: string;
+          status: string;
+          type: string;
+          updated_at: string;
+          username: string;
+        };
+        Insert: {
+          connection_options?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          credential_ref: string;
+          database_name: string;
+          host: string;
+          id?: string;
+          last_test_error?: string | null;
+          last_tested_at?: string | null;
+          name: string;
+          organization_id: string;
+          port?: number;
+          ssl_mode?: string;
+          status?: string;
+          type?: string;
+          updated_at?: string;
+          username: string;
+        };
+        Update: {
+          connection_options?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          credential_ref?: string;
+          database_name?: string;
+          host?: string;
+          id?: string;
+          last_test_error?: string | null;
+          last_tested_at?: string | null;
+          name?: string;
+          organization_id?: string;
+          port?: number;
+          ssl_mode?: string;
+          status?: string;
+          type?: string;
+          updated_at?: string;
+          username?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'data_sources_organization_id_fkey';
+            columns: ['organization_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      dataset_fields: {
+        Row: {
+          created_at: string;
+          data_type: string;
+          dataset_id: string;
+          id: string;
+          organization_id: string;
+          source_column: string;
+        };
+        Insert: {
+          created_at?: string;
+          data_type: string;
+          dataset_id: string;
+          id?: string;
+          organization_id: string;
+          source_column: string;
+        };
+        Update: {
+          created_at?: string;
+          data_type?: string;
+          dataset_id?: string;
+          id?: string;
+          organization_id?: string;
+          source_column?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'dataset_fields_dataset_id_fkey';
+            columns: ['dataset_id'];
+            isOneToOne: false;
+            referencedRelation: 'datasets';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'dataset_fields_organization_id_fkey';
+            columns: ['organization_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      datasets: {
+        Row: {
+          columns_cache: Json | null;
+          created_at: string;
+          created_by: string | null;
+          data_source_id: string;
+          deleted_at: string | null;
+          description: string | null;
+          id: string;
+          name: string;
+          organization_id: string;
+          source_sql: string | null;
+          source_table_name: string | null;
+          source_table_schema: string | null;
+          source_type: string;
+          updated_at: string;
+        };
+        Insert: {
+          columns_cache?: Json | null;
+          created_at?: string;
+          created_by?: string | null;
+          data_source_id: string;
+          deleted_at?: string | null;
+          description?: string | null;
+          id?: string;
+          name: string;
+          organization_id: string;
+          source_sql?: string | null;
+          source_table_name?: string | null;
+          source_table_schema?: string | null;
+          source_type: string;
+          updated_at?: string;
+        };
+        Update: {
+          columns_cache?: Json | null;
+          created_at?: string;
+          created_by?: string | null;
+          data_source_id?: string;
+          deleted_at?: string | null;
+          description?: string | null;
+          id?: string;
+          name?: string;
+          organization_id?: string;
+          source_sql?: string | null;
+          source_table_name?: string | null;
+          source_table_schema?: string | null;
+          source_type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'datasets_data_source_id_fkey';
+            columns: ['data_source_id'];
+            isOneToOne: false;
+            referencedRelation: 'data_sources';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'datasets_organization_id_fkey';
+            columns: ['organization_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      dimensions: {
+        Row: {
+          created_at: string;
+          dataset_id: string;
+          field_id: string;
+          id: string;
+          label: string;
+          name: string;
+          organization_id: string;
+          time_grain: string | null;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          dataset_id: string;
+          field_id: string;
+          id?: string;
+          label: string;
+          name: string;
+          organization_id: string;
+          time_grain?: string | null;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          dataset_id?: string;
+          field_id?: string;
+          id?: string;
+          label?: string;
+          name?: string;
+          organization_id?: string;
+          time_grain?: string | null;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'dimensions_dataset_id_fkey';
+            columns: ['dataset_id'];
+            isOneToOne: false;
+            referencedRelation: 'datasets';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'dimensions_field_id_fkey';
+            columns: ['field_id'];
+            isOneToOne: false;
+            referencedRelation: 'dataset_fields';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'dimensions_organization_id_fkey';
+            columns: ['organization_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       memberships: {
         Row: {
           created_at: string;
@@ -46,6 +283,63 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'memberships_organization_id_fkey';
+            columns: ['organization_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      metrics: {
+        Row: {
+          aggregation: string;
+          created_at: string;
+          dataset_id: string;
+          description: string | null;
+          expression: Json;
+          format: string;
+          id: string;
+          label: string;
+          name: string;
+          organization_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          aggregation: string;
+          created_at?: string;
+          dataset_id: string;
+          description?: string | null;
+          expression: Json;
+          format?: string;
+          id?: string;
+          label: string;
+          name: string;
+          organization_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          aggregation?: string;
+          created_at?: string;
+          dataset_id?: string;
+          description?: string | null;
+          expression?: Json;
+          format?: string;
+          id?: string;
+          label?: string;
+          name?: string;
+          organization_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'metrics_dataset_id_fkey';
+            columns: ['dataset_id'];
+            isOneToOne: false;
+            referencedRelation: 'datasets';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'metrics_organization_id_fkey';
             columns: ['organization_id'];
             isOneToOne: false;
             referencedRelation: 'organizations';
@@ -109,7 +403,14 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      create_data_source_secret: {
+        Args: { secret_name?: string; secret_value: string };
+        Returns: string;
+      };
+      get_data_source_secret: {
+        Args: { data_source_row_id: string };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;
