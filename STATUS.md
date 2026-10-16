@@ -20,15 +20,17 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 - [x] `.env.example`, `.env.local`, `.nvmrc`, `.prettierrc`, `LICENSE` (proprietary, all-rights-reserved)
 - [x] `supabase/config.toml`, `supabase/migrations/`, `supabase/seed.sql`
 - [x] `.github/workflows/ci.yml` (lint/typecheck/format/test + migration-lint) and `deploy-migrations.yml` (production migrations on merge to `main`)
-- [x] `docs/UI.md` — visual/design system spec
-- [x] `docs/UX.md` — flows, personas, interaction rules
+- [x] `docs/UI.md`, `docs/UX.md`, `docs/TESTING.md` — specs/strategy
 - [x] `docs/API.md`, `docs/EMBED.md` — stubs, to be filled in Phase 4 / Phase 2 respectively
 - [x] `CHANGELOG.md` — stub, Keep a Changelog format
-- [x] Local build/lint/typecheck/format/test all pass
+- [x] Vercel project `divya` connected to GitHub (auto-deploys on push to `main`), env vars set, confirmed live at [divya-drab.vercel.app](https://divya-drab.vercel.app) — `/api/health` returns `{"status":"ok"}`
+- [x] Design tokens from `docs/UI.md` wired into `app/globals.css` (Tailwind v4 `@theme`)
+- [x] Auth flow: `/login`, `/signup` pages, `/api/auth/provision-org` (idempotent org + admin-membership provisioning), `/auth/callback` (email-confirmation PKCE exchange), `/dashboards` stub with a `ProvisionRetry` recovery path
+- [x] Local build/lint/typecheck/format/test all pass; production build passes (fixed a Next.js 16 `cacheComponents` prerender error on `/dashboards`)
 
 ## In progress
 
-- [ ] Vercel project — connecting next
+- [ ] **Blocked**: `SUPABASE_SERVICE_ROLE_KEY` not yet in `.env.local` or Vercel — the auto-reveal was blocked by a safety guardrail (credential materialization), so this needs the user to copy it from the Supabase dashboard themselves. Nothing that uses `lib/supabase/admin.ts` (i.e. the signup → org-provisioning flow) can be tested end-to-end until it's set in both places.
 
 ## Not started (rest of Phase 1, in order)
 
@@ -37,12 +39,12 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 - [ ] Chart/widget engine (ECharts + TanStack Table, 8–12 widget types)
 - [ ] Dashboard designer (react-grid-layout canvas)
 - [ ] Dashboard viewer + filters
-- [ ] Deployment/pipeline hardening (secret audit once Vercel env vars are set; re-run Supabase advisors after each future migration)
+- [ ] Deployment/pipeline hardening (secret audit, re-run Supabase advisors after each future migration)
 
 ## Open decisions
 
 - **GitHub CLI**: not installed locally; repo was pre-created manually and pushed to via `git remote` + token-less HTTPS. Fine for now; revisit if automated repo/PR management is needed later.
-- **`SUPABASE_SERVICE_ROLE_KEY`**: not yet fetched/stored anywhere — needed when the signup→org-provisioning Route Handler is built (first consumer of `lib/supabase/admin.ts`).
+- **Email confirmation**: Supabase project defaults to requiring email confirmation on signup, so `/auth/callback` exists to handle it — not yet verified end-to-end (needs a real signup attempt, which needs the service-role key first to test provisioning).
 
 ## Roadmap beyond Phase 1
 
