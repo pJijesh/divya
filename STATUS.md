@@ -29,10 +29,7 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 - [x] Local build/lint/typecheck/format/test all pass; production build passes (fixed a Next.js 16 `cacheComponents` prerender error on `/dashboards`)
 - [x] `SUPABASE_SERVICE_ROLE_KEY` set in `.env.local` and Vercel (Secret type, all environments), verified valid against the Supabase Admin API
 - [x] **Full auth flow verified live in production** (signup → email confirmation → login → org provisioning → authenticated `/dashboards`), using a real Mailinator test account, then cleaned up. Found and fixed a real bug along the way: Supabase's Redirect URLs allowlist didn't include the Vercel domain, so confirmation emails silently fell back to `localhost:3000` — added `https://divya-drab.vercel.app/auth/callback` and set Site URL to the production domain. Also observed the `ProvisionRetry` recovery path trigger for real (a concurrent Supabase Auth rate-limit response interfered with the post-login redirect) and confirmed it correctly recovers.
-
-## In progress
-
-- [ ] Landing page — modern, marketing-focused, public (not behind auth) — requested by user, not yet started
+- [x] Public marketing landing page at `/` (Nav, Hero, Features, HowItWorks, FinalCta, Footer) — live at [divya-drab.vercel.app](https://divya-drab.vercel.app). Copy is deliberately honest about project stage ("Now building · Early access") rather than overclaiming unshipped features or using fabricated social proof/testimonials. Verified responsive (mobile nav toggle) and fully statically prerendered.
 
 ## Not started (rest of Phase 1, in order)
 
