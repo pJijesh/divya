@@ -21,7 +21,11 @@ export function PieWidget({ data, config }: WidgetComponentProps) {
             type: 'pie',
             radius: ['45%', '72%'],
             avoidLabelOverlap: true,
-            itemStyle: { borderColor: 'var(--color-surface-raised)', borderWidth: 2 },
+            // No borderColor override: ECharts paints to canvas, which
+            // can't resolve CSS custom properties (var(...) is a DOM/CSSOM
+            // concept) — a var() string here would just silently fail.
+            // The default border reads fine against both themes.
+            itemStyle: { borderWidth: 1 },
             label: { show: false },
             data: pieData,
           },

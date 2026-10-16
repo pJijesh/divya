@@ -30,21 +30,24 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 - [x] `SUPABASE_SERVICE_ROLE_KEY` set in `.env.local` and Vercel (Secret type, all environments), verified valid against the Supabase Admin API
 - [x] **Full auth flow verified live in production** (signup → email confirmation → login → org provisioning → authenticated `/dashboards`), using a real Mailinator test account, then cleaned up. Found and fixed a real bug along the way: Supabase's Redirect URLs allowlist didn't include the Vercel domain, so confirmation emails silently fell back to `localhost:3000` — added `https://divya-drab.vercel.app/auth/callback` and set Site URL to the production domain. Also observed the `ProvisionRetry` recovery path trigger for real (a concurrent Supabase Auth rate-limit response interfered with the post-login redirect) and confirmed it correctly recovers.
 - [x] Public marketing landing page at `/` (Nav, Hero, Features, HowItWorks, FinalCta, Footer) — live at [divya-drab.vercel.app](https://divya-drab.vercel.app). Copy is deliberately honest about project stage ("Now building · Early access") rather than overclaiming unshipped features or using fabricated social proof/testimonials. Verified responsive (mobile nav toggle) and fully statically prerendered.
+- [x] Data source connections + Postgres connector: `data_sources` table (Vault-backed credentials, never plaintext), SSRF guard, read-only transaction + statement-timeout wrapping, table/column introspection, query execution — registry-based (`lib/connectors/`) so future connector types are additive. UI for add-with-test-then-save.
+- [x] Semantic layer v1: `datasets`, `dataset_fields`, `metrics`, `dimensions` tables (RLS, `organization_id` denormalized everywhere). `lib/semantic/query-compiler.ts` translates `{dataset, metrics, dimensions, filters}` into one parameterized SQL statement — 14 passing unit tests (aggregations, time-grain grouping, every filter operator, injection attempts). Full CRUD UI: dataset list, create flow (table or query source, with preview-before-save), detail page with Source/Metrics & Dimensions tabs and schema-drift-aware refresh.
+- [x] Chart/widget engine: all 8 Phase-1 widget types (bar/line/area/pie/scatter/kpi/table/pivot_table) via ECharts (modular import) + TanStack Table v8, a shared widget registry and card chrome, TanStack Query wired into the root layout, and `/api/widgets/preview` + `/widgets/preview` to exercise widgets against real data before the dashboard designer exists.
+- [x] **CI fixed**: `tsc --noEmit` alone passed locally (stale `.next/types`) but failed in GitHub Actions' clean checkout, since Next.js 16's typed routes need `next typegen` run first. `typecheck` now runs `next typegen && tsc --noEmit`; confirmed green on CI.
 
 ## Not started (rest of Phase 1, in order)
 
-- [ ] Data source connections + Postgres connector (Vault-backed credentials)
-- [ ] Dataset + semantic layer v1 CRUD (`datasets`, `dataset_fields`, `metrics`, `dimensions`) + query-compiler
-- [ ] Chart/widget engine (ECharts + TanStack Table, 8–12 widget types)
 - [ ] Dashboard designer (react-grid-layout canvas)
 - [ ] Dashboard viewer + filters
 - [ ] Deployment/pipeline hardening (secret audit, re-run Supabase advisors after each future migration)
+- [ ] Manual click-through verification of the data-source/dataset/widget-preview UI against a real Postgres database (built and automated-tested, but not yet exercised by hand in the browser the way the auth flow was)
 
 ## Open decisions
 
 - **GitHub CLI**: not installed locally; repo was pre-created manually and pushed to via `git remote` + token-less HTTPS. Fine for now; revisit if automated repo/PR management is needed later.
 - **Supabase redirect-URL wildcard**: attempted to also allow `https://divya-*.vercel.app/auth/callback` (preview deployments) and `http://localhost:3000/auth/callback` (local dev) — only the exact production URL persisted; the other two didn't save for unclear reasons. Only blocks preview-deployment and local email-confirmation testing, not production. Revisit via the dashboard when needed.
 - **Supabase free-tier email rate limit**: hit this during testing (a handful of auth emails per hour). Fine for development; will need a custom SMTP provider configured before real users sign up at any volume.
+- **`deploy-migrations.yml` CI workflow fails on every push** — `SUPABASE_ACCESS_TOKEN`/`SUPABASE_PROJECT_REF` GitHub secrets were never set, since all migrations so far were applied directly to the live project via the Supabase MCP tool rather than through that pipeline. The schema itself is correct and live either way; this only means the CI automation path for migrations has never actually been exercised. Needs a Supabase personal access token added as a repo secret before it'll pass.
 
 ## Roadmap beyond Phase 1
 
