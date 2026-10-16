@@ -1,0 +1,2 @@
+-- Local/dev seed data. Intentionally empty for Phase 1 — add sample
+-- organizations/dashboards here once there's a stable schema worth seeding.

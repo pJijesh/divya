@@ -1,0 +1,30 @@
+name: Deploy Migrations
+
+# Runs production migrations on merge to main. Kept separate from the app
+# deploy itself — Vercel's GitHub integration deploys the app automatically
+# and needs no workflow step here. Migrations must stay additive/backward
+# -compatible with the previous app version for the brief window where both
+# could be live (see docs/UI.md / the plan file for the full rationale).
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+      - run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
