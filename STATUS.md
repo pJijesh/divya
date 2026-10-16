@@ -12,33 +12,37 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 
 - [x] Repo scaffolded: Next.js 16 (App Router, TypeScript, Tailwind, ESLint), pushed to [github.com/pJijesh/divya](https://github.com/pJijesh/divya)
 - [x] Supabase project created (`divya`, region `us-east-1`, org `pjijesh-outlookcom's projects`) — free tier
-- [x] Core client libs installed: `@supabase/supabase-js`, `@supabase/ssr`, `zod`
+- [x] Core client libs installed: `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `vitest`, `prettier`
+- [x] Tenancy/RLS migration applied live (`organizations`, `memberships`, `profiles`) + two follow-up migrations hardening internal functions and optimizing RLS per the Supabase security/performance advisors — both advisors now clean (only an expected INFO-level "unused index" note, no data yet)
+- [x] `types/database.types.ts` generated from the live schema
+- [x] Supabase client layering (`lib/supabase/{client,server,admin}.ts`) + session-refresh `proxy.ts` (migrated from `middleware.ts` per the Next.js 16 convention via official codemod)
+- [x] `/api/health` route
+- [x] `.env.example`, `.env.local`, `.nvmrc`, `.prettierrc`, `LICENSE` (proprietary, all-rights-reserved)
+- [x] `supabase/config.toml`, `supabase/migrations/`, `supabase/seed.sql`
+- [x] `.github/workflows/ci.yml` (lint/typecheck/format/test + migration-lint) and `deploy-migrations.yml` (production migrations on merge to `main`)
 - [x] `docs/UI.md` — visual/design system spec
 - [x] `docs/UX.md` — flows, personas, interaction rules
 - [x] `docs/API.md`, `docs/EMBED.md` — stubs, to be filled in Phase 4 / Phase 2 respectively
 - [x] `CHANGELOG.md` — stub, Keep a Changelog format
+- [x] Local build/lint/typecheck/format/test all pass
 
 ## In progress
 
-- [ ] `.env.example`, `.nvmrc`, `.prettierrc` — project infra files
-- [ ] Supabase CLI scaffold (`supabase/config.toml`, `supabase/migrations/`)
-- [ ] `.github/workflows/ci.yml` — lint/typecheck/test/migration-lint on PR
+- [ ] Vercel project — connecting next
 
 ## Not started (rest of Phase 1, in order)
 
-- [ ] Auth & multi-tenant schema + RLS (`organizations`, `memberships`, `profiles`)
 - [ ] Data source connections + Postgres connector (Vault-backed credentials)
 - [ ] Dataset + semantic layer v1 CRUD (`datasets`, `dataset_fields`, `metrics`, `dimensions`) + query-compiler
 - [ ] Chart/widget engine (ECharts + TanStack Table, 8–12 widget types)
 - [ ] Dashboard designer (react-grid-layout canvas)
 - [ ] Dashboard viewer + filters
-- [ ] Vercel deployment connected + first end-to-end deploy
-- [ ] Deployment/pipeline hardening (Supabase advisors, secret audit, `/api/health`)
+- [ ] Deployment/pipeline hardening (secret audit once Vercel env vars are set; re-run Supabase advisors after each future migration)
 
 ## Open decisions
 
-- **LICENSE**: leaning toward none (defaults to all-rights-reserved) unless an explicit proprietary notice is wanted — awaiting confirmation.
 - **GitHub CLI**: not installed locally; repo was pre-created manually and pushed to via `git remote` + token-less HTTPS. Fine for now; revisit if automated repo/PR management is needed later.
+- **`SUPABASE_SERVICE_ROLE_KEY`**: not yet fetched/stored anywhere — needed when the signup→org-provisioning Route Handler is built (first consumer of `lib/supabase/admin.ts`).
 
 ## Roadmap beyond Phase 1
 

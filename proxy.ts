@@ -32,8 +32,11 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isPublicPath = PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
+  // API routes own their auth response (e.g. /api/health must stay reachable
+  // unauthenticated, and Route Handlers return 401 JSON, not a page redirect).
+  const isApiRoute = request.nextUrl.pathname.startsWith('/api');
 
-  if (!user && !isPublicPath) {
+  if (!user && !isPublicPath && !isApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
