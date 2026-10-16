@@ -1,7 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/signup'];
+// Reachable without a session. '/auth' covers the email-confirmation
+// callback, which must never redirect-away even when already logged in
+// (unlike /login, /signup) since re-confirming while signed in is valid.
+const PUBLIC_PATHS = ['/login', '/signup', '/auth'];
+const AUTH_FORM_PATHS = ['/login', '/signup'];
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -42,7 +46,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isPublicPath) {
+  const isAuthFormPath = AUTH_FORM_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
+
+  if (user && isAuthFormPath) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboards';
     return NextResponse.redirect(url);
