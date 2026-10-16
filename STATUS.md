@@ -27,10 +27,12 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 - [x] Design tokens from `docs/UI.md` wired into `app/globals.css` (Tailwind v4 `@theme`)
 - [x] Auth flow: `/login`, `/signup` pages, `/api/auth/provision-org` (idempotent org + admin-membership provisioning), `/auth/callback` (email-confirmation PKCE exchange), `/dashboards` stub with a `ProvisionRetry` recovery path
 - [x] Local build/lint/typecheck/format/test all pass; production build passes (fixed a Next.js 16 `cacheComponents` prerender error on `/dashboards`)
+- [x] `SUPABASE_SERVICE_ROLE_KEY` set in `.env.local` and Vercel (Secret type, all environments), verified valid against the Supabase Admin API
+- [x] **Full auth flow verified live in production** (signup → email confirmation → login → org provisioning → authenticated `/dashboards`), using a real Mailinator test account, then cleaned up. Found and fixed a real bug along the way: Supabase's Redirect URLs allowlist didn't include the Vercel domain, so confirmation emails silently fell back to `localhost:3000` — added `https://divya-drab.vercel.app/auth/callback` and set Site URL to the production domain. Also observed the `ProvisionRetry` recovery path trigger for real (a concurrent Supabase Auth rate-limit response interfered with the post-login redirect) and confirmed it correctly recovers.
 
 ## In progress
 
-- [ ] **Blocked**: `SUPABASE_SERVICE_ROLE_KEY` not yet in `.env.local` or Vercel — the auto-reveal was blocked by a safety guardrail (credential materialization), so this needs the user to copy it from the Supabase dashboard themselves. Nothing that uses `lib/supabase/admin.ts` (i.e. the signup → org-provisioning flow) can be tested end-to-end until it's set in both places.
+- [ ] Landing page — modern, marketing-focused, public (not behind auth) — requested by user, not yet started
 
 ## Not started (rest of Phase 1, in order)
 
@@ -44,7 +46,8 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 ## Open decisions
 
 - **GitHub CLI**: not installed locally; repo was pre-created manually and pushed to via `git remote` + token-less HTTPS. Fine for now; revisit if automated repo/PR management is needed later.
-- **Email confirmation**: Supabase project defaults to requiring email confirmation on signup, so `/auth/callback` exists to handle it — not yet verified end-to-end (needs a real signup attempt, which needs the service-role key first to test provisioning).
+- **Supabase redirect-URL wildcard**: attempted to also allow `https://divya-*.vercel.app/auth/callback` (preview deployments) and `http://localhost:3000/auth/callback` (local dev) — only the exact production URL persisted; the other two didn't save for unclear reasons. Only blocks preview-deployment and local email-confirmation testing, not production. Revisit via the dashboard when needed.
+- **Supabase free-tier email rate limit**: hit this during testing (a handful of auth emails per hour). Fine for development; will need a custom SMTP provider configured before real users sign up at any volume.
 
 ## Roadmap beyond Phase 1
 
