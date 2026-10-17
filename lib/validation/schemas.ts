@@ -65,3 +65,39 @@ export const dimensionCreateSchema = z.object({
 });
 
 export type DimensionCreateInput = z.infer<typeof dimensionCreateSchema>;
+
+export const dashboardCreateSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required'),
+});
+
+export type DashboardCreateInput = z.infer<typeof dashboardCreateSchema>;
+
+export const dashboardUpdateSchema = z.object({
+  name: z.string().trim().min(1).optional(),
+  description: z.string().trim().optional(),
+  isPublished: z.boolean().optional(),
+});
+
+export type DashboardUpdateInput = z.infer<typeof dashboardUpdateSchema>;
+
+const WIDGET_TYPES = ['bar', 'line', 'area', 'pie', 'scatter', 'kpi', 'table', 'pivot_table'] as const;
+
+export const dashboardWidgetCreateSchema = z.object({
+  datasetId: z.uuid(),
+  widgetType: z.enum(WIDGET_TYPES),
+  title: z.string().trim().optional(),
+  metricIds: z.array(z.uuid()).min(1, 'At least one metric is required'),
+  dimensionIds: z.array(z.uuid()).default([]),
+  layout: z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number() }).optional(),
+});
+
+export type DashboardWidgetCreateInput = z.infer<typeof dashboardWidgetCreateSchema>;
+
+export const dashboardWidgetUpdateSchema = z.object({
+  title: z.string().trim().optional(),
+  metricIds: z.array(z.uuid()).min(1).optional(),
+  dimensionIds: z.array(z.uuid()).optional(),
+  layout: z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number() }).optional(),
+});
+
+export type DashboardWidgetUpdateInput = z.infer<typeof dashboardWidgetUpdateSchema>;

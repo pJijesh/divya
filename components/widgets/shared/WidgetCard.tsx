@@ -2,11 +2,36 @@ import { AlertTriangle } from 'lucide-react';
 
 // Shared chrome every widget type renders inside (docs/UI.md §5.1) — each
 // widget component only implements its body; loading/error/empty states
-// are handled once, here, not duplicated per widget.
-export function WidgetCard({ title, children }: { title?: string; children: React.ReactNode }) {
+// are handled once, here, not duplicated per widget. The header carries
+// `widget-drag-handle` so the designer's grid can drag by title bar only
+// (not the whole card, which would fight chart tooltip interaction) —
+// see components/dashboard/DashboardDesigner.tsx's `draggableHandle`.
+export function WidgetCard({
+  title,
+  onRemove,
+  children,
+}: {
+  title?: string;
+  onRemove?: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <div className="border-border bg-surface-raised flex h-full flex-col rounded-[var(--radius-md)] border p-4">
-      {title && <h3 className="text-text-primary mb-2 text-sm font-semibold">{title}</h3>}
+      {(title || onRemove) && (
+        <div className="widget-drag-handle mb-2 flex items-center justify-between">
+          {title && <h3 className="text-text-primary text-sm font-semibold">{title}</h3>}
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              onMouseDown={(e) => e.stopPropagation()}
+              className="text-text-muted hover:text-danger text-xs"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      )}
       <div className="min-h-0 flex-1">{children}</div>
     </div>
   );
