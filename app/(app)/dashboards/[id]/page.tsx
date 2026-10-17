@@ -43,13 +43,13 @@ export default async function DashboardViewerPage({ params }: { params: Promise<
   const canEdit = membership ? roleSatisfies(membership.role, 'editor') : false;
 
   return (
-    <div className="min-h-screen bg-bg">
-      <header className="flex h-12 items-center justify-between border-b border-border bg-surface px-6">
-        <h1 className="text-sm font-medium text-text-primary">{dashboard.name}</h1>
+    <div className="bg-bg min-h-screen">
+      <header className="border-border bg-surface flex h-12 items-center justify-between border-b px-6">
+        <h1 className="text-text-primary text-sm font-medium">{dashboard.name}</h1>
         {canEdit && (
           <Link
             href={`/dashboards/${dashboard.id}/edit`}
-            className="text-sm text-primary hover:text-primary-hover"
+            className="text-primary hover:text-primary-hover text-sm"
           >
             Edit
           </Link>
@@ -58,7 +58,7 @@ export default async function DashboardViewerPage({ params }: { params: Promise<
 
       <div className="p-6">
         {!widgets || widgets.length === 0 ? (
-          <div className="rounded-[var(--radius-md)] border border-dashed border-border p-12 text-center text-sm text-text-muted">
+          <div className="border-border text-text-muted rounded-[var(--radius-md)] border border-dashed p-12 text-center text-sm">
             This dashboard has no widgets yet.
           </div>
         ) : (
@@ -68,7 +68,10 @@ export default async function DashboardViewerPage({ params }: { params: Promise<
               return (
                 <div
                   key={widget.id}
-                  style={{ gridColumn: `span ${layout.w} / span ${layout.w}`, minHeight: layout.h * 40 }}
+                  style={{
+                    gridColumn: `span ${layout.w} / span ${layout.w}`,
+                    minHeight: layout.h * 40,
+                  }}
                 >
                   <WidgetRenderer
                     dashboardId={dashboard.id}

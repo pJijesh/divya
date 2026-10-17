@@ -14,14 +14,20 @@ export async function PATCH(
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
   if (!roleSatisfies(membership.role, 'editor')) {
-    return NextResponse.json({ error: 'Only editors and admins can edit widgets' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Only editors and admins can edit widgets' },
+      { status: 403 },
+    );
   }
 
   const { id: dashboardId, widgetId } = await params;
   const body = await request.json().catch(() => null);
   const parsed = dashboardWidgetUpdateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid input' }, { status: 400 });
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? 'Invalid input' },
+      { status: 400 },
+    );
   }
 
   const supabase = await createClient();
@@ -37,7 +43,10 @@ export async function PATCH(
       .eq('dashboard_id', dashboardId)
       .single();
 
-    const currentConfig = (current?.query_config as { metricIds: string[]; dimensionIds: string[] }) ?? {
+    const currentConfig = (current?.query_config as {
+      metricIds: string[];
+      dimensionIds: string[];
+    }) ?? {
       metricIds: [],
       dimensionIds: [],
     };
@@ -70,7 +79,10 @@ export async function DELETE(
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
   if (!roleSatisfies(membership.role, 'editor')) {
-    return NextResponse.json({ error: 'Only editors and admins can delete widgets' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Only editors and admins can delete widgets' },
+      { status: 403 },
+    );
   }
 
   const { id: dashboardId, widgetId } = await params;

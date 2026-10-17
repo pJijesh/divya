@@ -11,14 +11,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
   if (!roleSatisfies(membership.role, 'editor')) {
-    return NextResponse.json({ error: 'Only editors and admins can edit dashboards' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Only editors and admins can edit dashboards' },
+      { status: 403 },
+    );
   }
 
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = dashboardUpdateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid input' }, { status: 400 });
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? 'Invalid input' },
+      { status: 400 },
+    );
   }
 
   const update: TablesUpdate<'dashboards'> = {};
@@ -42,7 +48,10 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
   if (!roleSatisfies(membership.role, 'editor')) {
-    return NextResponse.json({ error: 'Only editors and admins can delete dashboards' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Only editors and admins can delete dashboards' },
+      { status: 403 },
+    );
   }
 
   const { id } = await params;

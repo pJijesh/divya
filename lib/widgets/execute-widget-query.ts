@@ -73,9 +73,12 @@ export async function executeWidgetQuery(input: WidgetQueryInput): Promise<Widge
     return { ok: false, status: 404, error: 'One or more dimensions not found' };
   }
 
-  const { data: decryptedPassword, error: secretError } = await supabase.rpc('get_data_source_secret', {
-    data_source_row_id: dataset.data_sources.id,
-  });
+  const { data: decryptedPassword, error: secretError } = await supabase.rpc(
+    'get_data_source_secret',
+    {
+      data_source_row_id: dataset.data_sources.id,
+    },
+  );
 
   if (secretError || !decryptedPassword) {
     return { ok: false, status: 500, error: secretError?.message ?? 'Could not read credential' };
@@ -86,7 +89,11 @@ export async function executeWidgetQuery(input: WidgetQueryInput): Promise<Widge
     compiled = compileQuery({
       source:
         dataset.source_type === 'table'
-          ? { sourceType: 'table', schema: dataset.source_table_schema!, table: dataset.source_table_name! }
+          ? {
+              sourceType: 'table',
+              schema: dataset.source_table_schema!,
+              table: dataset.source_table_name!,
+            }
           : { sourceType: 'query', sql: dataset.source_sql! },
       dimensions: dimensionRows.map((d) => ({
         alias: d.name,
@@ -140,6 +147,10 @@ export async function executeWidgetQuery(input: WidgetQueryInput): Promise<Widge
       truncated: result.truncated,
     };
   } catch (err) {
-    return { ok: false, status: 502, error: err instanceof Error ? err.message : 'Query execution failed' };
+    return {
+      ok: false,
+      status: 502,
+      error: err instanceof Error ? err.message : 'Query execution failed',
+    };
   }
 }

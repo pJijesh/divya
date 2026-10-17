@@ -1,7 +1,12 @@
 'use client';
 
 import { WIDGET_REGISTRY } from '@/components/widgets/registry';
-import { WidgetCard, WidgetEmpty, WidgetError, WidgetLoading } from '@/components/widgets/shared/WidgetCard';
+import {
+  WidgetCard,
+  WidgetEmpty,
+  WidgetError,
+  WidgetLoading,
+} from '@/components/widgets/shared/WidgetCard';
 import type { WidgetType } from '@/components/widgets/types';
 import { useWidgetData } from '@/components/widgets/useWidgetData';
 

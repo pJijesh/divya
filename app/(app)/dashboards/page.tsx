@@ -43,17 +43,17 @@ export default async function DashboardsPage() {
   const canEdit = membership.role === 'admin' || membership.role === 'editor';
 
   return (
-    <main className="min-h-screen bg-bg">
+    <main className="bg-bg min-h-screen">
       <AppHeader orgName={membership.organization?.name ?? ''} />
 
       <div className="mx-auto max-w-[1280px] px-6 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-text-primary">Dashboards</h1>
+          <h1 className="text-text-primary text-xl font-semibold">Dashboards</h1>
           {canEdit && <NewDashboardButton />}
         </div>
 
         {!dashboards || dashboards.length === 0 ? (
-          <div className="rounded-[var(--radius-md)] border border-dashed border-border p-12 text-center">
+          <div className="border-border rounded-[var(--radius-md)] border border-dashed p-12 text-center">
             <p className="text-text-secondary">No dashboards yet.</p>
           </div>
         ) : (
@@ -62,10 +62,10 @@ export default async function DashboardsPage() {
               <Link
                 key={dashboard.id}
                 href={canEdit ? `/dashboards/${dashboard.id}/edit` : `/dashboards/${dashboard.id}`}
-                className="rounded-[var(--radius-md)] border border-border bg-surface-raised p-4 transition-shadow hover:shadow-md"
+                className="border-border bg-surface-raised rounded-[var(--radius-md)] border p-4 transition-shadow hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-text-primary">{dashboard.name}</span>
+                  <span className="text-text-primary font-medium">{dashboard.name}</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                       dashboard.is_published
@@ -76,7 +76,7 @@ export default async function DashboardsPage() {
                     {dashboard.is_published ? 'Published' : 'Draft'}
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-text-muted">
+                <p className="text-text-muted mt-2 text-xs">
                   Updated {new Date(dashboard.updated_at).toLocaleDateString()}
                 </p>
               </Link>

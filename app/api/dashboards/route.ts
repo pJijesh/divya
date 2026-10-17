@@ -10,13 +10,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
   if (!roleSatisfies(membership.role, 'editor')) {
-    return NextResponse.json({ error: 'Only editors and admins can create dashboards' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Only editors and admins can create dashboards' },
+      { status: 403 },
+    );
   }
 
   const body = await request.json().catch(() => null);
   const parsed = dashboardCreateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid input' }, { status: 400 });
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? 'Invalid input' },
+      { status: 400 },
+    );
   }
 
   const supabase = await createClient();
@@ -35,7 +41,10 @@ export async function POST(request: Request) {
     .single();
 
   if (error || !dashboard) {
-    return NextResponse.json({ error: error?.message ?? 'Could not create dashboard' }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message ?? 'Could not create dashboard' },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ id: dashboard.id }, { status: 201 });

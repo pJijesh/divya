@@ -64,7 +64,9 @@ export function DashboardDesigner({
     await fetch(`/api/dashboards/${dashboardId}/widgets/${widgetId}`, { method: 'DELETE' });
   }
 
-  async function handleLayoutChange(nextLayout: { i: string; x: number; y: number; w: number; h: number }[]) {
+  async function handleLayoutChange(
+    nextLayout: { i: string; x: number; y: number; w: number; h: number }[],
+  ) {
     setWidgets((prev) =>
       prev.map((w) => {
         const item = nextLayout.find((l) => l.i === w.id);
@@ -105,12 +107,12 @@ export function DashboardDesigner({
   const gridLayout = widgets.map((w) => ({ i: w.id, ...w.layout }));
 
   return (
-    <div className="flex h-screen flex-col bg-bg">
-      <div className="flex items-center justify-between border-b border-border bg-surface px-6 py-3">
+    <div className="bg-bg flex h-screen flex-col">
+      <div className="border-border bg-surface flex items-center justify-between border-b px-6 py-3">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold text-text-primary">{dashboardName}</h1>
+          <h1 className="text-text-primary text-lg font-semibold">{dashboardName}</h1>
           {saveState !== 'idle' && (
-            <span className="text-xs text-text-muted">
+            <span className="text-text-muted text-xs">
               {saveState === 'saving' ? 'Saving…' : 'Saved'}
             </span>
           )}
@@ -119,14 +121,14 @@ export function DashboardDesigner({
           <button
             type="button"
             onClick={() => router.push(`/dashboards/${dashboardId}`)}
-            className="rounded-[var(--radius-sm)] border border-border px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface"
+            className="border-border text-text-primary hover:bg-surface rounded-[var(--radius-sm)] border px-3 py-1.5 text-sm font-medium"
           >
             View
           </button>
           <button
             type="button"
             onClick={() => setPanelOpen((open) => !open)}
-            className="rounded-[var(--radius-sm)] border border-border px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface"
+            className="border-border text-text-primary hover:bg-surface rounded-[var(--radius-sm)] border px-3 py-1.5 text-sm font-medium"
           >
             + Add widget
           </button>
@@ -135,7 +137,7 @@ export function DashboardDesigner({
             onClick={handlePublishToggle}
             disabled={publishing}
             className={`rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-semibold transition-colors ${
-              published ? 'bg-success text-white' : 'bg-primary text-white hover:bg-primary-hover'
+              published ? 'bg-success text-white' : 'bg-primary hover:bg-primary-hover text-white'
             } disabled:opacity-60`}
           >
             {published ? 'Published' : 'Publish'}
@@ -146,7 +148,7 @@ export function DashboardDesigner({
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-auto p-6">
           {widgets.length === 0 ? (
-            <div className="flex h-full items-center justify-center rounded-[var(--radius-md)] border border-dashed border-border text-sm text-text-muted">
+            <div className="border-border text-text-muted flex h-full items-center justify-center rounded-[var(--radius-md)] border border-dashed text-sm">
               No widgets yet — click &quot;+ Add widget&quot; to start.
             </div>
           ) : (

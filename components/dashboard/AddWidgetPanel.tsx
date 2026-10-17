@@ -13,7 +13,12 @@ export function AddWidgetPanel({
   onAdd,
   onClose,
 }: {
-  onAdd: (input: { datasetId: string; widgetType: WidgetType; metricIds: string[]; dimensionIds: string[] }) => Promise<void>;
+  onAdd: (input: {
+    datasetId: string;
+    widgetType: WidgetType;
+    metricIds: string[];
+    dimensionIds: string[];
+  }) => Promise<void>;
   onClose: () => void;
 }) {
   const [datasets, setDatasets] = useState<DatasetOption[]>([]);
@@ -75,9 +80,9 @@ export function AddWidgetPanel({
   }
 
   return (
-    <div className="flex h-full flex-col border-l border-border bg-surface-raised p-4">
+    <div className="border-border bg-surface-raised flex h-full flex-col border-l p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-text-primary">Add widget</h2>
+        <h2 className="text-text-primary text-sm font-semibold">Add widget</h2>
         <button type="button" onClick={onClose} className="text-text-muted hover:text-text-primary">
           ✕
         </button>
@@ -85,11 +90,11 @@ export function AddWidgetPanel({
 
       <div className="flex-1 space-y-4 overflow-y-auto">
         <div>
-          <label className="mb-1 block text-sm font-medium text-text-primary">Dataset</label>
+          <label className="text-text-primary mb-1 block text-sm font-medium">Dataset</label>
           <select
             value={datasetId}
             onChange={(e) => void handleDatasetChange(e.target.value)}
-            className="w-full rounded-[var(--radius-sm)] border border-border bg-bg px-2 py-1.5 text-sm text-text-primary"
+            className="border-border bg-bg text-text-primary w-full rounded-[var(--radius-sm)] border px-2 py-1.5 text-sm"
           >
             <option value="">Select…</option>
             {datasets.map((ds) => (
@@ -101,7 +106,7 @@ export function AddWidgetPanel({
         </div>
 
         <div>
-          <span className="mb-1 block text-sm font-medium text-text-primary">Widget type</span>
+          <span className="text-text-primary mb-1 block text-sm font-medium">Widget type</span>
           <div className="grid grid-cols-2 gap-1.5">
             {WIDGET_TYPES.map((type) => (
               <button
@@ -121,9 +126,9 @@ export function AddWidgetPanel({
         </div>
 
         <div>
-          <span className="mb-1 block text-sm font-medium text-text-primary">Metrics</span>
+          <span className="text-text-primary mb-1 block text-sm font-medium">Metrics</span>
           {metrics.map((m) => (
-            <label key={m.id} className="flex items-center gap-2 text-sm text-text-secondary">
+            <label key={m.id} className="text-text-secondary flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={selectedMetricIds.includes(m.id)}
@@ -132,13 +137,15 @@ export function AddWidgetPanel({
               {m.label}
             </label>
           ))}
-          {datasetId && metrics.length === 0 && <p className="text-xs text-text-muted">No metrics yet.</p>}
+          {datasetId && metrics.length === 0 && (
+            <p className="text-text-muted text-xs">No metrics yet.</p>
+          )}
         </div>
 
         <div>
-          <span className="mb-1 block text-sm font-medium text-text-primary">Dimensions</span>
+          <span className="text-text-primary mb-1 block text-sm font-medium">Dimensions</span>
           {dimensions.map((d) => (
-            <label key={d.id} className="flex items-center gap-2 text-sm text-text-secondary">
+            <label key={d.id} className="text-text-secondary flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={selectedDimensionIds.includes(d.id)}
@@ -149,14 +156,14 @@ export function AddWidgetPanel({
           ))}
         </div>
 
-        {error && <p className="text-sm text-danger">{error}</p>}
+        {error && <p className="text-danger text-sm">{error}</p>}
       </div>
 
       <button
         type="button"
         onClick={handleAdd}
         disabled={!datasetId || selectedMetricIds.length === 0 || saving}
-        className="mt-4 w-full rounded-[var(--radius-sm)] bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:opacity-60"
+        className="bg-primary hover:bg-primary-hover mt-4 w-full rounded-[var(--radius-sm)] px-4 py-2 text-sm font-semibold text-white transition-colors disabled:opacity-60"
       >
         {saving ? 'Adding…' : 'Add to dashboard'}
       </button>

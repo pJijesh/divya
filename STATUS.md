@@ -6,7 +6,7 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 
 ## Current phase
 
-**Phase 1 — MVP** (in progress)
+**Phase 1 — MVP** (core feature set complete; hardening/polish remains)
 
 ## Done
 
@@ -35,13 +35,17 @@ Living snapshot of where the build actually is. See the [plan](../../.claude/pla
 - [x] Chart/widget engine: all 8 Phase-1 widget types (bar/line/area/pie/scatter/kpi/table/pivot_table) via ECharts (modular import) + TanStack Table v8, a shared widget registry and card chrome, TanStack Query wired into the root layout, and `/api/widgets/preview` + `/widgets/preview` to exercise widgets against real data before the dashboard designer exists.
 - [x] **CI fixed**: `tsc --noEmit` alone passed locally (stale `.next/types`) but failed in GitHub Actions' clean checkout, since Next.js 16's typed routes need `next typegen` run first. `typecheck` now runs `next typegen && tsc --noEmit`; confirmed green on CI.
 - [x] Moved the authenticated routes (`dashboards`, `datasets`, `data-sources`, `widgets`) into an `app/(app)/` route group with its own layout holding `QueryProvider`, instead of the root layout — `QueryClient`'s constructor calls `Date.now()` internally, which was breaking static prerendering of the public landing page when the provider lived at the root. `/` is confirmed still fully static after the move. Separately found that `/dashboards` logs a `Date.now()` prerender diagnostic in `next dev` only — production build is 100% clean for that route (correctly `ƒ` dynamic, zero errors) and the page works correctly; treating this as a `next dev`-mode Cache Components rough edge in this Next.js version, not a real bug, since it doesn't reproduce in `next build`.
+- [x] **Dashboard designer + viewer** — `dashboards`/`dashboard_widgets`/`dashboard_filters` tables (RLS: viewer-role users can only ever select a _published_ dashboard — a draft genuinely doesn't exist for them, enforced at the RLS layer, not just hidden in the UI). `lib/widgets/execute-widget-query.ts` factors out the compile-then-execute path shared by the ad-hoc preview route and the new persisted-widget data route. Designer: react-grid-layout canvas (drag by title bar only), an Add Widget panel, explicit Publish toggle (autosave only writes the draft). Viewer: read-only grid render, 404s a draft for non-editors. **Verified live in the browser**: create dashboard → designer renders → Add Widget panel shows all 8 types → View → viewer renders correctly, full round trip with a disposable test account, then cleaned up. Pinned `react-grid-layout` to 1.5.4 (v2 is a hooks-based rewrite with no `WidthProvider`, same situation as `@tanstack/react-table` v9 earlier).
 
-## Not started (rest of Phase 1, in order)
+This completes Phase 1's core feature set end-to-end: auth → data sources → datasets/semantic layer → widgets → dashboards (designer + viewer), all live and deployed.
 
-- [ ] Dashboard designer (react-grid-layout canvas)
-- [ ] Dashboard viewer + filters
-- [ ] Deployment/pipeline hardening (secret audit, re-run Supabase advisors after each future migration)
-- [ ] Manual click-through verification of the data-source/dataset/widget-preview UI against a real Postgres database (built and automated-tested, but not yet exercised by hand in the browser the way the auth flow was)
+## Not started / known gaps
+
+- [ ] **Dashboard-level filters** — `dashboard_filters` table and RLS exist, but there's no filter-management UI or filter-to-widget data propagation yet. Deferred from this pass; the schema doesn't block adding it later.
+- [ ] End-to-end click-through test of a dashboard **with real widget data** against a live external Postgres database — verified so far is the full UI flow (create/add-widget/publish/view) and the API/compiler logic (automated tests), but no test account has had an actual connected Postgres data source + dataset to render real chart data in the browser.
+- [ ] Deployment/pipeline hardening (secret audit, re-run Supabase advisors after each future migration, index the handful of INFO-level unindexed `created_by` foreign keys if they ever show real traffic)
+- [ ] Enable Supabase's "leaked password protection" (HaveIBeenPwned check) — flagged by the security advisor, a one-click dashboard setting, not yet turned on
+- [ ] `deploy-migrations.yml` CI workflow still fails (see below) — not blocking since migrations are applied directly via the Supabase MCP tool, but the automation path itself has never been exercised
 
 ## Open decisions
 

@@ -80,7 +80,16 @@ export const dashboardUpdateSchema = z.object({
 
 export type DashboardUpdateInput = z.infer<typeof dashboardUpdateSchema>;
 
-const WIDGET_TYPES = ['bar', 'line', 'area', 'pie', 'scatter', 'kpi', 'table', 'pivot_table'] as const;
+const WIDGET_TYPES = [
+  'bar',
+  'line',
+  'area',
+  'pie',
+  'scatter',
+  'kpi',
+  'table',
+  'pivot_table',
+] as const;
 
 export const dashboardWidgetCreateSchema = z.object({
   datasetId: z.uuid(),

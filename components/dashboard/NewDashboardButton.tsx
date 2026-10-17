@@ -27,7 +27,7 @@ export function NewDashboardButton() {
       type="button"
       onClick={handleCreate}
       disabled={creating}
-      className="rounded-[var(--radius-sm)] bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:opacity-60"
+      className="bg-primary hover:bg-primary-hover rounded-[var(--radius-sm)] px-4 py-2 text-sm font-semibold text-white transition-colors disabled:opacity-60"
     >
       {creating ? 'Creating…' : 'New dashboard'}
     </button>
